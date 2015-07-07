@@ -1,0 +1,55 @@
+YEAST
+=====
+
+Yeast stands for Yet Another Security Thing, a home security, surveillance,
+supervision and automation system.
+
+Yeast is a system built on top a Raspberry Pi 2 board with sensors and
+additional devices connected as needed.
+
+It is a linux based system built using Yocto. This directory contains all the 
+needed yocto layers and recipes to build the system plus a script to setup a
+working directory with all the yocto stuff needed to perform the build.
+
+The supplied script will download the yocto/poky pacakges and the official
+raspberry pi layer into the supplied directory. It will then copy there the
+yeast product specific layers.
+
+Dependencies
+------------
+For yocto to work you will need to install below packages (asuming apt 
+repository tool).
+
+$ sudo apt-get install gawk wget git-core diffstat unzip texinfo \
+ build-essential chrpath libsdl1.2-dev xterm
+
+Installing yocto and layers
+---------------------------
+You may just used the supplied gettoolchain.sh to download all the needed stuff
+and setup a directory to work with. You may get help with the -h option.
+
+Get yocto and layers with -d <directory> option:
+
+$ ./gettoolchain.sh -d myworkingdirectory
+
+If you want to download yocto yourself you may use below commands:
+
+$ git clone -b fido git://git.yoctoproject.org/poky
+$ cd poky
+$ git clone -b fido git://git.yoctoproject.org/meta-raspberrypi
+$ git clone -b fido git://git.openembedded.org/meta-openembedded
+$ <TODO: get yeast layers>
+
+
+Building the system
+-------------------
+Inside your defined yocto directory, you will find an empty directory named
+build (only if you used gettoolchain.sh script). This directory is used as 
+working directory for the build. 
+
+You will need first to setup the environment for yocto scripts to work on your
+build directory. To do so, launch below command.
+
+$ source oe-init-build-env build
+
+<TODO: finish build instructions>
