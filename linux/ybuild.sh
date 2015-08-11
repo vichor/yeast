@@ -80,7 +80,7 @@ fi
     
 # Run yocto
 PATHBACKUP=$PATH
-source fixpath.sh
+source yfixpath.sh
 pushd ${OPT_YDIR}
 source oe-init-build-env build
 bitbake $TARGET
