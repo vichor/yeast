@@ -6,26 +6,32 @@
 # the linux distribution for Yeast.
 #
 # Parameters
-#       -h  optional    Get help
-#       -k  optional    Keep the log file when finished successfully
+#       -d <name>   mandatory   Use directory <name> as output
+#       -h          optional    Get help
+#       -k          optional    Keep the log file when finished successfully
 #
 # Author: Victor Garcia
 # Licensing: See Yeast license file
 #
 # TODO: 
-#   1. Copiar la metalayer rtl8188eu en ese directorio.
-#   2. Editar las layers para trabajar para la rasp 2.
+#   1. Copy yoctocfg files into the yocto destination directory. Edit the
+#      bblayers.conf file to set the proper absolute path there.
+#   2. Copy the rtl8188eu metalayer in the output directory.
+#   3. Automatically patch downloaded layers as needed.
+#      Or may it be better to have readied a yocto layer just to patch it?
+#   4. Create ybuild.sh script which bitbakes the yeast project.
 
 THIS=$(basename $0)
 
 help () {
     # Prints the help
+    echo
     echo "$THIS [-d <directory>] [ [-k] ] | [-h]"
     echo "Gets the toolchain needed to build the Yeast Linux Distribution."
     echo "Parameters:"
-    echo "\t-d\tOutput directory."
-    echo "\t-h\tWhen supplied, the script will show this message and exit."
-    echo "\t-k\tKeep the log file even when the script finishes successfully."
+    echo "    -d  Output directory."
+    echo "    -h  When supplied, the script will show this message and exit."
+    echo "    -k  Keep the log file even when the script finishes successfully."
     echo
 }
     
@@ -49,32 +55,32 @@ do
             OPT_OUTDIR=${OPTARG}
             ;;
         *)
-            echo "Unknown parameter " $opt
+            # Unknown parameter. Call to getopts already prints message
             help
             exit 1
     esac
 done
 shift $(expr $OPTIND - 1)
 
-# Check parameter consistency
-if [ -z "$OPT_OUTDIR" ] ; then
-    echo "You need to supply a directory name."
-    exit 1
-fi
-    
 # When help, print and exit
 if "$OPT_HELP" ; then
     help
     exit 0
 fi
 
+# Check parameter consistency
+if [ -z "$OPT_OUTDIR" ] ; then
+    echo "You need to supply a directory name (use -d option)."
+    exit 1
+fi
+    
 # Initialize log file
-rm $LOGFILE
+rm -f $LOGFILE
 touch $LOGFILE
 
 # Create work directories
 echo -n "Creating work directory ${OPT_OUTDIR}... "
-mkdir ${OPT_OUTDIR} 2>> $LOGFILE
+#mkdir ${OPT_OUTDIR} 2>> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then 
     echo "error, see $LOGFILE file."
     exit 1
@@ -85,7 +91,7 @@ echo "done"
 # Use a shallowed clone to save bandwidth and storage (only HEAD will be
 # retrieved using --depth 1).
 echo -n "Getting poky... "
-git clone --depth 1 git://git.yoctoproject.org/poky.git $OPT_OUTDIR >> $LOGFILE 2>&1
+#git clone --depth 1 git://git.yoctoproject.org/poky.git $OPT_OUTDIR >> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then
     echo "error, see $LOGFILE file."
     exit 1
@@ -93,7 +99,8 @@ fi
 echo "done"
 
 echo -n "Creating build directory... "
-mkdir ${OPT_OUTDIR}/build 2>> $LOGFILE
+BUILD_DIR=${OPT_OUTDIR}/build 
+#mkdir ${BUILD_DIR} 2>> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then 
     echo "error, see $LOGFILE file."
     exit 1
@@ -101,7 +108,7 @@ fi
 echo "done"
 
 echo -n "Getting raspberry layer... "
-git clone --depth 1 git://git.yoctoproject.org/meta-raspberrypi $OPT_OUTDIR/meta-raspberrypi >> $LOGFILE 2>&1
+#git clone --depth 1 git://git.yoctoproject.org/meta-raspberrypi $OPT_OUTDIR/meta-raspberrypi >> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then
     echo "error, see log file"
     exit 1
@@ -111,9 +118,18 @@ echo "done"
 echo -n "Getting yeast layers... "
 echo "TODO"
 
+# Setting up build directory
+echo -n "Setting up build directory... "
+base/setupdir.sh -b ${BUILD_DIR} -y $OPT_OUTDIR >> $LOGFILE 2>&1
+if [ $? -ne 0 ] ; then
+    echo "error, see log file"
+    exit 1
+fi
+echo "done"
+
 # Remove log file by default
 if "$OPT_KEEPLOG" ; then echo "Log file: $LOGFILE" 
 fi
 
-echo "Ready to build Yeast Linux distribution. You may run now linbuild.sh"
+echo "Ready to build Yeast Linux distribution."
 
