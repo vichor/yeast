@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# gettoolchain.sh
+# yprepre.sh
 #
 # Gets, using git, the poky framework to have a complete toolchain to build
 # the linux distribution for Yeast.
@@ -14,8 +14,8 @@
 # Licensing: See Yeast license file
 #
 # TODO: 
-#   1. Copy yoctocfg files into the yocto destination directory. Edit the
-#      bblayers.conf file to set the proper absolute path there.
+#   1. DONE--Copy yoctocfg files into the yocto destination directory. Edit the
+#            bblayers.conf file to set the proper absolute path there.
 #   2. Copy the rtl8188eu metalayer in the output directory.
 #   3. Automatically patch downloaded layers as needed.
 #      Or may it be better to have readied a yocto layer just to patch it?
@@ -80,7 +80,7 @@ touch $LOGFILE
 
 # Create work directories
 echo -n "Creating work directory ${OPT_OUTDIR}... "
-#mkdir ${OPT_OUTDIR} 2>> $LOGFILE 2>&1
+mkdir ${OPT_OUTDIR} 2>> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then 
     echo "error, see $LOGFILE file."
     exit 1
@@ -91,7 +91,7 @@ echo "done"
 # Use a shallowed clone to save bandwidth and storage (only HEAD will be
 # retrieved using --depth 1).
 echo -n "Getting poky... "
-#git clone --depth 1 git://git.yoctoproject.org/poky.git $OPT_OUTDIR >> $LOGFILE 2>&1
+git clone --depth 1 git://git.yoctoproject.org/poky.git $OPT_OUTDIR >> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then
     echo "error, see $LOGFILE file."
     exit 1
@@ -100,7 +100,7 @@ echo "done"
 
 echo -n "Creating build directory... "
 BUILD_DIR=${OPT_OUTDIR}/build 
-#mkdir ${BUILD_DIR} 2>> $LOGFILE 2>&1
+mkdir ${BUILD_DIR} 2>> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then 
     echo "error, see $LOGFILE file."
     exit 1
@@ -108,7 +108,7 @@ fi
 echo "done"
 
 echo -n "Getting raspberry layer... "
-#git clone --depth 1 git://git.yoctoproject.org/meta-raspberrypi $OPT_OUTDIR/meta-raspberrypi >> $LOGFILE 2>&1
+git clone --depth 1 git://git.yoctoproject.org/meta-raspberrypi $OPT_OUTDIR/meta-raspberrypi >> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then
     echo "error, see log file"
     exit 1
@@ -120,7 +120,7 @@ echo "TODO"
 
 # Setting up build directory
 echo -n "Setting up build directory... "
-base/setupdir.sh -b ${BUILD_DIR} -y $OPT_OUTDIR >> $LOGFILE 2>&1
+base/ysetupdir.sh -b ${BUILD_DIR} -y $OPT_OUTDIR >> $LOGFILE 2>&1
 if [ $? -ne 0 ] ; then
     echo "error, see log file"
     exit 1

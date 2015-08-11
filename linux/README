@@ -25,31 +25,22 @@ $ sudo apt-get install gawk wget git-core diffstat unzip texinfo \
 
 Installing yocto and layers
 ---------------------------
-You may just used the supplied gettoolchain.sh to download all the needed stuff
+You may just used the supplied yprepare.sh to download all the needed stuff
 and setup a directory to work with. You may get help with the -h option.
 
 Get yocto and layers with -d <directory> option:
 
-$ ./gettoolchain.sh -d myworkingdirectory
-
-If you want to download yocto yourself you may use below commands:
-
-$ git clone -b fido git://git.yoctoproject.org/poky
-$ cd poky
-$ git clone -b fido git://git.yoctoproject.org/meta-raspberrypi
-$ git clone -b fido git://git.openembedded.org/meta-openembedded
-$ <TODO: get yeast layers>
+$ ./yprepare.sh -d myyoctoworkingdirectory
 
 
 Building the system
 -------------------
-Inside your defined yocto directory, you will find an empty directory named
-build (only if you used gettoolchain.sh script). This directory is used as 
-working directory for the build. 
+When getting the toolchain, the script yprepare.sh will already have setup 
+also the build directory ready to geneate Yeast root file system including all 
+the needed software.
 
-You will need first to setup the environment for yocto scripts to work on your
-build directory. To do so, launch below command.
+To build the system there's a script which launches bitbake. Just call it with
+-d <directory>, being this directory the one you have just setup before.
 
-$ source oe-init-build-env build
+$ ./ybuild.sh -d myyoctoworkingdirectory
 
-<TODO: finish build instructions>

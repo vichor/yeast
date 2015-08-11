@@ -2,6 +2,16 @@
 #
 # Updates any absolute path reference found in the different yocto configuration
 # files.
+#
+# Parameters
+#   -b  <name>  mandatory   Specifiy a build output directory.
+#   -f          optional    Removes build directory if it exists.
+#   -h          optional    When supplied, the script will the help and exit.
+#   -y  <name>  mandatory   Specifiy yocto framework working directory.
+#
+# Author: Victor Garcia
+# Licensing: See Yeast license file
+#
 
 THIS=$(basename $0)
 
@@ -43,7 +53,6 @@ do
             OPT_FORCE=true
             ;;
         *)
-            echo "Wrong command. See help below."
             help
             exit 1
     esac
