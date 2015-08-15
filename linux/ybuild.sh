@@ -78,11 +78,11 @@ if    [ ! -d ${OPT_BDIR}/conf ] \
     exit 1
 fi
     
+# Patch PATH variable to remove . 
+PATH=$(echo $PATH | sed "s/:\.:/:/g" | sed "s/^\.://g")
+
 # Run yocto
-PATHBACKUP=$PATH
-source yfixpath.sh
 pushd ${OPT_YDIR}
 source oe-init-build-env build
 bitbake $TARGET
 popd
-PATH=$PATHBACKUP
