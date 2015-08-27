@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# yprepre.sh
+# yprepare.sh
 #
 # Gets, using git, the poky framework to have a complete toolchain to build
 # the linux distribution for Yeast.
@@ -129,6 +129,7 @@ echo "done"
 
 # Remove log file by default
 if "$OPT_KEEPLOG" ; then echo "Log file: $LOGFILE" 
+else echo "Removing log file: $LOGFILE" && rm -r $LOGFILE
 fi
 
 echo "Ready to build Yeast Linux distribution."
